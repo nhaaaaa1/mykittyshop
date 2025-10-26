@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h2>Welcome to Sparkle Shop</h2>
+        <p>Where every sparkle tells a story.</p>
+        <a href="{{ url_for('products') }}" class="btn btn-primary">Shop Now</a>
+    </div>
+    <div class="hero-image">
+        <img src="https://wallpapers-clan.com/wp-content/uploads/2024/10/hello-kitty-sparkles-dress-desktop-wallpaper-preview.jpg">
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="featured-products">
+    <h3>🌸 Featured 🌸</h3>
+    <div class="products-grid">
+        {% for flower in flowers %}
+        <div class="product-card">
+            <img src="{{ flower.image }}" alt="{{ flower.name }}">
+            <div class="product-info">
+                <h4>{{ flower.name }}</h4>
+                <p class="price">${{ "%.2f"|format(flower.price) }}</p>
+                <a href="{{ url_for('product_details', product_id=flower.id) }}" class="btn btn-secondary">View Details</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="feature">
+        <i class="fas fa-shipping-fast"></i>
+        <h4>Free Shipping</h4>
+        <p>On orders over $50</p>
+    </div>
+    <div class="feature">
+        <i class="fas fa-gift"></i>
+        <h4>Elegant Jewelry</h4>
+        <p>Crafted to perfection</p>
+    </div>
+    <div class="feature">
+        <i class="fas fa-heart"></i>
+        <h4>Made with Love</h4>
+        <p>Every arrangement</p>
+    </div>
+</section>
+{% endblock %}

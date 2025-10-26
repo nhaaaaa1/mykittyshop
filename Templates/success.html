@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="success-page">
+    <div class="success-content">
+        <div class="success-animation">
+            <div class="success-icon">💖</div>
+            <div class="confetti">
+                <span>🎀</span>
+                <span>✨</span>
+                <span>🌟</span>
+                <span>💫</span>
+                <span>🎉</span>
+            </div>
+        </div>
+        <h1>Message Sent Successfully! 🎀</h1>
+        <p>Thank you for reaching out! We've received your message and will get back to you as soon as possible. Our team is excited to help you!</p>
+
+        <div class="success-details">
+            <div class="detail-card">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <strong>Response Time</strong>
+                    <p>Within 24 hours</p>
+                </div>
+            </div>
+            <div class="detail-card">
+                <i class="fas fa-envelope"></i>
+                <div>
+                    <strong>Check Your Email</strong>
+                    <p>We sent a confirmation</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="success-actions">
+            <a href="{{ url_for('home') }}" class="btn btn-primary">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </a>
+            <a href="{{ url_for('all_products') }}" class="btn btn-secondary">
+                <i class="fas fa-shopping-bag"></i>
+                Continue Shopping
+            </a>
+        </div>
+
+        <div class="success-tip">
+            <p>💡 <strong>Pro Tip:</strong> Follow us on Instagram for exclusive deals and cute content!</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
