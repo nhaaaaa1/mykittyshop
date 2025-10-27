@@ -1,16 +1,45 @@
-from flask import Flask, render_template, request, jsonify, flash
+from flask import Flask, render_template, request, flash
 import requests
 import os
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key-here'
+app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here')
 
-# Telegram Bot Configuration
+# =============================
+# ✅ Telegram Bot Configuration
+# =============================
 TOKEN = "8148823820:AAGX7OjvLEIz6ZQXvQSyhWWHst_nafMT26s"
-CHAT_ID = "@ziyu07062002"
+CHAT_ID = "@ziyu07062002"  # Channel username (bot must be admin)
 BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
 
-# Sample flower data with image URLs
+def send_telegram_message(message):
+    """Send message to Telegram channel"""
+    url = f"{BASE_URL}/sendMessage"
+    data = {
+        "chat_id": CHAT_ID,
+        "text": message,
+        "parse_mode": "HTML"
+    }
+
+    try:
+        response = requests.post(url, data=data, timeout=10)
+        print(f"Telegram response: {response.status_code} - {response.text}")
+
+        if response.status_code != 200:
+            print("❌ Failed to send Telegram message. Check bot permissions or chat ID.")
+        else:
+            print("✅ Message sent to Telegram successfully!")
+
+        return response.status_code == 200
+
+    except Exception as e:
+        print(f"🚨 Telegram send failed: {e}")
+        return False
+
+
+# =============================
+# ✅ Sample Product Data
+# =============================
 flowers = [
     {
         'id': 1,
@@ -74,23 +103,12 @@ flowers = [
     }
 ]
 
+# =============================
+# ✅ Flask Routes
+# =============================
 
-def send_telegram_message(message):
-    """Send message to Telegram bot"""
-    url = f"{BASE_URL}/sendMessage"
-    data = {
-        "chat_id": CHAT_ID,
-        "text": message,
-        "parse_mode": "HTML"
-    }
-    try:
-        response = requests.post(url, data=data)
-        return response.status_code == 200
-    except:
-        return False
-
-
-@app.route('/')
+# Fix Render HEAD request error
+@app.route('/', methods=['GET', 'HEAD'])
 def home():
     return render_template('index.html', flowers=flowers[:4])  # Show only 4 on homepage
 
@@ -116,26 +134,30 @@ def about():
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        message = request.form['message']
+        name = request.form.get('name')
+        email = request.form.get('email')
+        message = request.form.get('message')
 
-        # Send notification to Telegram
-        telegram_msg = f"🌹 <b>New Contact Form Submission</b> 🌹\n\n"
-        telegram_msg += f"<b>Name:</b> {name}\n"
-        telegram_msg += f"<b>Email:</b> {email}\n"
-        telegram_msg += f"<b>Message:</b> {message}\n"
+        telegram_msg = (
+            f"🌹 <b>New Contact Form Submission</b> 🌹\n\n"
+            f"<b>Name:</b> {name}\n"
+            f"<b>Email:</b> {email}\n"
+            f"<b>Message:</b> {message}\n"
+        )
 
         if send_telegram_message(telegram_msg):
-            flash('Thank you for your message! We\'ll get back to you soon.', 'success')
+            flash("Thank you for your message! We'll get back to you soon.", "success")
         else:
-            flash('Message sent! (Telegram notification failed)', 'warning')
+            flash("Message sent, but Telegram notification failed. Check logs.", "warning")
 
         return render_template('contact.html')
 
     return render_template('contact.html')
 
 
+# =============================
+# ✅ Run App
+# =============================
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=os.environ.get('DEBUG', False))
+    app.run(host='0.0.0.0', port=port)
